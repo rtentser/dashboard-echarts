@@ -1,12 +1,33 @@
 import type { ChartConfig } from './types';
+import mockData from './mock/mock.json';
 
 export interface ChartConfigWithDataSource {
   title: string;
-  type: 'line-chart' | 'bar-chart' | 'pie-chart' | 'scatter-chart';
-  dataSource: {
-    xField: string; // path like "общее.месяц"
-    yField: string; // path like "ДДС.Остаток денег на конец месяца "
+  type: 'line-chart' | 'bar-chart' | 'stacked-bar-chart' | 'area-chart' | 'pie-chart' | 'doughnut-chart' | 'pie-3d-chart' | 'combo-chart' | 'scatter-chart';
+  dataSource?: {
+    xField?: string;
+    yField?: string; // Single series
+    yFields?: Array<{ name: string; field: string }>; // Multiple series for line/bar charts
+    barFields?: Array<{ name: string; field: string }>; // Multiple bar series for combo
+    lineFields?: Array<{ name: string; field: string }>; // Multiple line series for combo
+    seriesField?: string; // For stacked charts
   };
+}
+
+export interface SingleValueConfigWithoutDataSource {
+  title: string;
+  type: 'single-value';
+  value: number;
+  unit?: string;
+}
+
+export interface SummaryConfigWithDataSource {
+  title: string;
+  type: 'summary';
+  dataSource: {
+    valueField: string; // path like "ДДС.Остаток денег на конец месяца"
+  };
+  unit?: string;
 }
 
 export interface SummaryConfigWithoutDataSource {
@@ -15,16 +36,17 @@ export interface SummaryConfigWithoutDataSource {
   currentValue: number;
   previousValue: number;
   unit?: string;
+  monthIndex?: number;
 }
 
 export interface TabConfig {
   name: string;
-  charts: (ChartConfigWithDataSource | SummaryConfigWithoutDataSource)[];
+  charts: (ChartConfigWithDataSource | SingleValueConfigWithoutDataSource | SummaryConfigWithDataSource | SummaryConfigWithoutDataSource)[];
 }
 
 export interface ChartComponentConfig {
   type: 'chart';
-  config: ChartConfigWithDataSource | SummaryConfigWithoutDataSource;
+  config: ChartConfigWithDataSource | SingleValueConfigWithoutDataSource | SummaryConfigWithDataSource | SummaryConfigWithoutDataSource;
 }
 
 export interface TabsBlockComponentConfig {
@@ -33,7 +55,19 @@ export interface TabsBlockComponentConfig {
   tabs: TabConfig[];
 }
 
-export type LayoutComponent = ChartComponentConfig | TabsBlockComponentConfig;
+export interface GroupHorizontalComponentConfig {
+  type: 'group-horizontal';
+  title?: string;
+  items: LayoutComponent[];
+}
+
+export interface GroupVerticalComponentConfig {
+  type: 'group-vertical';
+  title: string;
+  items: LayoutComponent[];
+}
+
+export type LayoutComponent = ChartComponentConfig | TabsBlockComponentConfig | GroupHorizontalComponentConfig | GroupVerticalComponentConfig;
 
 export interface PageConfig {
   layout: LayoutComponent[];
@@ -62,15 +96,11 @@ const parseValue = (val: unknown): number => {
  * Load data from mock or API based on environment
  */
 const loadData = async (): Promise<any> => {
-  const useMock = import.meta.env.VITE_USE_MOCK === 'true';
+  const useMock = import.meta.env.VITE_USE_MOCK !== 'false';
 
   if (useMock) {
-    // Load mock data via fetch to allow HMR to detect changes
-    const response = await fetch('/src/mock/mock.json');
-    if (!response.ok) {
-      throw new Error('Failed to load mock data');
-    }
-    return response.json();
+    // Return imported mock data
+    return mockData;
   }
 
   // TODO: Replace with actual API call
@@ -86,9 +116,42 @@ const loadData = async (): Promise<any> => {
  * Load chart data from mock.json or external API
  */
 export const loadChartData = async (
-  configWithDataSource: ChartConfigWithDataSource | SummaryConfigWithoutDataSource
+  configWithDataSource: ChartConfigWithDataSource | SingleValueConfigWithoutDataSource | SummaryConfigWithDataSource | SummaryConfigWithoutDataSource,
+  monthIndices?: { start: number; end: number }
 ): Promise<ChartConfig> => {
-  // Summary doesn't need to load data
+  // Single value doesn't need to load data
+  if (configWithDataSource.type === 'single-value') {
+    return configWithDataSource as any;
+  }
+
+  // Handle summary with dataSource - needs data loading
+  if (configWithDataSource.type === 'summary' && 'dataSource' in configWithDataSource) {
+    const data = await loadData();
+    const config = configWithDataSource as SummaryConfigWithDataSource;
+    const { valueField } = config.dataSource;
+
+    const allValues = getNestedValue(data, valueField) as unknown[];
+    if (!Array.isArray(allValues) || allValues.length === 0) {
+      throw new Error(`Could not find field: ${valueField}`);
+    }
+
+    // Get current and previous values based on month indices
+    const endIdx = monthIndices?.end ?? allValues.length - 1;
+    const startIdx = monthIndices?.start ?? Math.max(0, endIdx - 1);
+
+    const currentValue = parseValue(allValues[endIdx]);
+    const previousValue = parseValue(allValues[startIdx]);
+
+    return {
+      title: config.title,
+      type: 'summary',
+      currentValue,
+      previousValue,
+      unit: config.unit,
+    } as any;
+  }
+
+  // Handle summary without dataSource - return as-is
   if (configWithDataSource.type === 'summary') {
     return configWithDataSource as any;
   }
@@ -96,12 +159,107 @@ export const loadChartData = async (
   const data = await loadData();
 
   const { title, type, dataSource } = configWithDataSource as ChartConfigWithDataSource;
-  const { xField, yField } = dataSource;
+  // If no dataSource, return as-is
+  if (!dataSource) {
+    return configWithDataSource as any;
+  }
 
-  const xData = getNestedValue(data, xField) as (string | number)[];
-  const yDataRaw = getNestedValue(data, yField) as unknown[];
+  const { xField, yField, yFields, barFields, lineFields, seriesField } = dataSource;
 
-  if (!xData || !yDataRaw) {
+  // Handle different chart types
+  if (type === 'stacked-bar-chart') {
+    // Stacked bar charts need series field
+    const xData = xField ? (getNestedValue(data, xField) as (string | number)[]) : [];
+    if (!xData || xData.length === 0) {
+      throw new Error(`Could not find xField: ${xField}`);
+    }
+    // For now, return empty series - would need different config structure
+    return {
+      title,
+      type,
+      x: xData,
+      series: [{ name: 'Series 1', data: [] }],
+    } as any;
+  }
+
+  // Handle line-chart and bar-chart with multiple series
+  if ((type === 'line-chart' || type === 'bar-chart') && yFields && yFields.length > 0) {
+    const xData = xField ? (getNestedValue(data, xField) as (string | number)[]) : [];
+    if (!xData || xData.length === 0) {
+      throw new Error(`Could not find xField: ${xField}`);
+    }
+
+    const series = yFields.map(({ name, field }) => {
+      const yDataRaw = getNestedValue(data, field) as unknown[];
+      if (!Array.isArray(yDataRaw)) {
+        throw new Error(`Could not find field: ${field}`);
+      }
+      return {
+        name,
+        data: yDataRaw.map(parseValue),
+      };
+    });
+
+    return {
+      title,
+      type,
+      x: xData,
+      series,
+    } as any;
+  }
+
+  // Handle combo-chart with multiple series
+  if (type === 'combo-chart' && (barFields || lineFields)) {
+    const xData = xField ? (getNestedValue(data, xField) as (string | number)[]) : [];
+    if (!xData || xData.length === 0) {
+      throw new Error(`Could not find xField: ${xField}`);
+    }
+
+    const series: Array<{ name: string; type: 'bar' | 'line'; data: number[] }> = [];
+
+    // Add bar series
+    if (barFields && barFields.length > 0) {
+      barFields.forEach(({ name, field }) => {
+        const yDataRaw = getNestedValue(data, field) as unknown[];
+        if (!Array.isArray(yDataRaw)) {
+          throw new Error(`Could not find field: ${field}`);
+        }
+        series.push({
+          name,
+          type: 'bar',
+          data: yDataRaw.map(parseValue),
+        });
+      });
+    }
+
+    // Add line series
+    if (lineFields && lineFields.length > 0) {
+      lineFields.forEach(({ name, field }) => {
+        const yDataRaw = getNestedValue(data, field) as unknown[];
+        if (!Array.isArray(yDataRaw)) {
+          throw new Error(`Could not find field: ${field}`);
+        }
+        series.push({
+          name,
+          type: 'line',
+          data: yDataRaw.map(parseValue),
+        });
+      });
+    }
+
+    return {
+      title,
+      type,
+      x: xData,
+      series,
+    } as any;
+  }
+
+  // Handle single series (backward compatible)
+  const xData = xField ? (getNestedValue(data, xField) as (string | number)[]) : [];
+  const yDataRaw = yField ? (getNestedValue(data, yField) as unknown[]) : [];
+
+  if (!Array.isArray(xData) || !Array.isArray(yDataRaw) || xData.length === 0 || yDataRaw.length === 0) {
     throw new Error(`Could not find fields: ${xField}, ${yField}`);
   }
 
@@ -112,66 +270,90 @@ export const loadChartData = async (
     type: type as any,
     x: xData,
     y: yData,
-  };
+  } as any;
 };
 
 /**
  * Load multiple charts from config array
  */
 export const loadChartsData = async (
-  chartsConfig: (ChartConfigWithDataSource | SummaryConfigWithoutDataSource)[]
+  chartsConfig: (ChartConfigWithDataSource | SingleValueConfigWithoutDataSource | SummaryConfigWithDataSource | SummaryConfigWithoutDataSource)[],
+  monthIndices?: { start: number; end: number }
 ): Promise<ChartConfig[]> => {
-  return Promise.all(chartsConfig.map(config => loadChartData(config)));
+  return Promise.all(chartsConfig.map(config => loadChartData(config, monthIndices)));
 };
 
 /**
  * Load tabs with all charts
  */
 export const loadTabsData = async (
-  tabsConfig: TabConfig[] | undefined
+  tabsConfig: TabConfig[] | undefined,
+  monthIndices?: { start: number; end: number }
 ): Promise<Array<{ name: string; charts: ChartConfig[] }>> => {
   if (!tabsConfig || tabsConfig.length === 0) return [];
   return Promise.all(
     tabsConfig.map(async (tab) => ({
       name: tab.name,
-      charts: await loadChartsData(tab.charts),
+      charts: await loadChartsData(tab.charts, monthIndices),
     }))
   );
 };
 
 /**
- * Load page data (process layout with mixed components)
+ * Load page data (process layout with mixed components) - RECURSIVE
  */
+const processLayoutComponent = async (
+  component: LayoutComponent,
+  monthIndices?: { start: number; end: number }
+): Promise<any> => {
+  if (component.type === 'chart') {
+    return {
+      type: 'chart' as const,
+      data: await loadChartData(component.config, monthIndices),
+    };
+  }
+
+  if (component.type === 'tabs-block') {
+    return {
+      type: 'tabs-block' as const,
+      title: component.title,
+      tabs: await Promise.all(
+        component.tabs.map(async (tab) => ({
+          name: tab.name,
+          charts: await loadChartsData(tab.charts, monthIndices),
+        }))
+      ),
+    };
+  }
+
+  if (component.type === 'group-horizontal') {
+    return {
+      type: 'group-horizontal' as const,
+      title: component.title,
+      items: await Promise.all(
+        component.items.map(item => processLayoutComponent(item, monthIndices))
+      ),
+    };
+  }
+
+  if (component.type === 'group-vertical') {
+    return {
+      type: 'group-vertical' as const,
+      title: component.title,
+      items: await Promise.all(
+        component.items.map(item => processLayoutComponent(item, monthIndices))
+      ),
+    };
+  }
+
+  throw new Error(`Unknown component type: ${(component as any).type}`);
+};
+
 export const loadPageData = async (
-  pageConfig: PageConfig
-): Promise<Array<{
-  type: 'chart' | 'tabs-block';
-  data: ChartConfig;
-} | {
-  type: 'tabs-block';
-  title?: string;
-  tabs: Array<{ name: string; charts: ChartConfig[] }>;
-}>> => {
+  pageConfig: PageConfig,
+  monthIndices?: { start: number; end: number }
+): Promise<any[]> => {
   return Promise.all(
-    (pageConfig.layout || []).map(async (component) => {
-      if (component.type === 'chart') {
-        return {
-          type: 'chart' as const,
-          data: await loadChartData(component.config),
-        };
-      } else if (component.type === 'tabs-block') {
-        return {
-          type: 'tabs-block' as const,
-          title: component.title,
-          tabs: await Promise.all(
-            component.tabs.map(async (tab) => ({
-              name: tab.name,
-              charts: await loadChartsData(tab.charts),
-            }))
-          ),
-        };
-      }
-      throw new Error(`Unknown component type: ${(component as any).type}`);
-    })
+    (pageConfig.layout || []).map(component => processLayoutComponent(component, monthIndices))
   );
 };
