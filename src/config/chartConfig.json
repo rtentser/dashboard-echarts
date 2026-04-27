@@ -1,0 +1,54 @@
+{
+    "layout": [
+        {
+            "type": "chart",
+            "config": {
+                "title": "Текущий остаток",
+                "type": "summary",
+                "currentValue": 125000,
+                "previousValue": 100000,
+                "unit": "₽"
+            }
+        },
+        {
+            "type": "tabs-block",
+            "title": "Финансовые показатели",
+            "tabs": [
+                {
+                    "name": "Финансы",
+                    "charts": [
+                        {
+                            "title": "Остаток денег на конец месяца",
+                            "type": "bar-chart",
+                            "dataSource": {
+                                "xField": "общее.месяц",
+                                "yField": "ДДС.Остаток денег на конец месяца "
+                            }
+                        },
+                        {
+                            "title": "Поступления по ОД",
+                            "type": "line-chart",
+                            "dataSource": {
+                                "xField": "общее.месяц",
+                                "yField": "ДДС.Поступления по ОД"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Финансы 2",
+                    "charts": [
+                        {
+                            "title": "Зарплата",
+                            "type": "bar-chart",
+                            "dataSource": {
+                                "xField": "общее.месяц",
+                                "yField": "ДДС.Зарплата"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
