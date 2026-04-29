@@ -93,6 +93,45 @@
                                             }
                                         }
                                     ]
+                                },
+                                {
+                                    "type": "group-horizontal",
+                                    "items": [
+                                        {
+                                            "type": "chart",
+                                            "config": {
+                                                "title": "Остаток денег",
+                                                "type": "summary",
+                                                "dataSource": {
+                                                    "valueField": "ДДС.Остаток денег на конец месяца"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "title": "Доля рынка",
+                                            "type": "doughnut-chart",
+                                            "labels": [
+                                                "Компания A",
+                                                "Компания B",
+                                                "Компания C"
+                                            ],
+                                            "values": [
+                                                35,
+                                                40,
+                                                25
+                                            ]
+                                        },
+                                        {
+                                            "type": "chart",
+                                            "config": {
+                                                "title": "Общий денежный поток",
+                                                "type": "summary",
+                                                "dataSource": {
+                                                    "valueField": "ДДС.Поступления денег от клиентов"
+                                                }
+                                            }
+                                        }
+                                    ]
                                 }
                             ]
                         },
