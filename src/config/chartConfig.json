@@ -1,6 +1,15 @@
 {
     "layout": [
         {
+            "type": "chart",
+            "config": {
+                "title": "Заголовок 1",
+                "type": "summary",
+                "currentValue": "ДДС.Остаток денег на конец месяца",
+                "previousValue": "ДДС.Остаток денег на конец месяца"
+            }
+        },
+        {
             "type": "tabs-block",
             "title": "Финансовые показатели",
             "tabs": [
@@ -37,12 +46,12 @@
                         },
                         {
                             "type": "group-vertical",
-                            "title": "Финансовый отчёт",
+                            "title": "Результаты анализируемого периода",
                             "items": [
                                 {
                                     "type": "chart",
                                     "config": {
-                                        "title": "Остаток денег на конец месяца",
+                                        "title": "Остаток денег",
                                         "type": "bar-chart",
                                         "dataSource": {
                                             "xField": "общее.месяц",
