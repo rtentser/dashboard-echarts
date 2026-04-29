@@ -9,15 +9,22 @@ const ensureSameLength = (left: unknown[], right: unknown[], message: string) =>
 
 // Dark theme colors matching the design
 const darkThemeColors = {
-  bgDark: '#030810',
-  bgCard: '#0a1530',
-  borderGold: '#ffd700',
-  textGold: '#ffd700',
-  textLight: '#ffffff',
-  textMuted: '#b0b0b0',
-  blueLight: '#5ab3ff',
-  blueDark: '#1a2f50',
-  chartColors: ['#ffd700', '#5ab3ff', '#7cb342', '#ff6b6b', '#29b6f6', '#ab47bc'],
+  bgDark: '#0a1020',
+  bgCard: '#111a33',
+  borderGold: '#c88b46',
+  textGold: '#f4c56a',
+  textLight: '#f6e7c8',
+  textMuted: '#c7b38c',
+  blueLight: '#3f7ee8',
+  blueDark: '#102a5c',
+  chartColors: [
+    '#f4c56a',
+    '#3f7ee8',
+    '#2f63c7',
+    '#b87532',
+    '#a7d98b',
+    '#e25b4f',
+  ],
 };
 
 // Base dark theme configuration
@@ -25,40 +32,46 @@ const getDarkThemeConfig = (title: string = ''): Partial<EChartsOption> => ({
   backgroundColor: 'transparent',
   textStyle: {
     color: darkThemeColors.textLight,
-    fontFamily: 'Inter, system-ui, sans-serif',
+    fontFamily: 'Manrope, Inter, system-ui, sans-serif',
   },
   title: {
     text: title,
     textStyle: {
       color: darkThemeColors.textGold,
-      fontSize: 14,
-      fontWeight: 600,
+      fontSize: 13,
+      fontWeight: 500,
     },
     left: 'center',
     top: 0,
   },
   tooltip: {
-    backgroundColor: 'rgba(15, 37, 64, 0.9)',
-    borderColor: '#f0c674',
+    backgroundColor: 'rgba(20, 32, 58, 0.95)',
+    borderColor: '#c88b46',
     textStyle: {
       color: darkThemeColors.textLight,
+      fontFamily: 'Manrope, Inter, system-ui, sans-serif',
+      fontSize: 12,
     },
-    borderWidth: 1,
+    borderWidth: 1.25,
   },
   xAxis: {
     type: 'category',
     axisLine: {
       lineStyle: {
-        color: 'rgba(255, 215, 0, 0.3)',
+        color: 'rgba(200, 139, 70, 0.48)',
+        width: 1.5,
       },
     },
     axisLabel: {
       color: darkThemeColors.textMuted,
       fontSize: 11,
+      fontWeight: 400,
+      fontFamily: 'Manrope, Inter, system-ui, sans-serif',
     },
     splitLine: {
       lineStyle: {
-        color: 'rgba(255, 215, 0, 0.12)',
+        color: 'rgba(200, 139, 70, 0.18)',
+        width: 1,
       },
     },
   },
@@ -66,16 +79,20 @@ const getDarkThemeConfig = (title: string = ''): Partial<EChartsOption> => ({
     type: 'value',
     axisLine: {
       lineStyle: {
-        color: 'rgba(255, 215, 0, 0.3)',
+        color: 'rgba(200, 139, 70, 0.48)',
+        width: 1.5,
       },
     },
     axisLabel: {
       color: darkThemeColors.textMuted,
       fontSize: 11,
+      fontWeight: 400,
+      fontFamily: 'Manrope, Inter, system-ui, sans-serif',
     },
     splitLine: {
       lineStyle: {
-        color: 'rgba(255, 215, 0, 0.12)',
+        color: 'rgba(200, 139, 70, 0.18)',
+        width: 1,
       },
     },
   },
@@ -131,8 +148,8 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
                 x2: 0,
                 y2: 1,
                 colorStops: [
-                  { offset: 0, color: 'rgba(255, 215, 0, 0.4)' },
-                  { offset: 1, color: 'rgba(255, 215, 0, 0.08)' },
+                  { offset: 0, color: 'rgba(244, 197, 106, 0.45)' },
+                  { offset: 1, color: 'rgba(200, 139, 70, 0.08)' },
                 ],
               },
             },
@@ -166,14 +183,6 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
           type: 'bar',
           data: s.data,
           name: s.name,
-          label: {
-            show: true,
-            position: 'top',
-            color: darkThemeColors.textLight,
-            fontSize: 11,
-            formatter: ({ value }: any) =>
-              typeof value === 'number' ? value.toLocaleString('ru-RU') : String(value),
-          },
           itemStyle: {
             color: darkThemeColors.chartColors[idx % darkThemeColors.chartColors.length],
           },
@@ -199,8 +208,9 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
                 x2: 0,
                 y2: 1,
                 colorStops: [
-                  { offset: 0, color: '#ffd700' },
-                  { offset: 1, color: '#5ab3ff' },
+                  { offset: 0, color: '#f4c56a' },
+                  { offset: 0.45, color: '#c88b46' },
+                  { offset: 1, color: '#3f7ee8' },
                 ],
               },
             },
@@ -213,19 +223,12 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
                   x2: 0,
                   y2: 1,
                   colorStops: [
-                    { offset: 0, color: '#ffed4e' },
-                    { offset: 1, color: '#5ab3ff' },
+                    { offset: 0, color: '#ffe08a' },
+                    { offset: 0.45, color: '#d99a4a' },
+                    { offset: 1, color: '#5b9cff' },
                   ],
                 },
               },
-            },
-            label: {
-              show: true,
-              position: 'top',
-              color: darkThemeColors.textLight,
-              fontSize: 11,
-              formatter: ({ value }: any) =>
-                typeof value === 'number' ? value.toLocaleString('ru-RU') : String(value),
             },
           },
         ];
@@ -291,16 +294,20 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
           type: 'value' as const,
           axisLine: {
             lineStyle: {
-              color: 'rgba(255, 215, 0, 0.3)',
+              color: 'rgba(200, 139, 70, 0.48)',
+              width: 1.5,
             },
           },
           axisLabel: {
             color: darkThemeColors.textMuted,
             fontSize: 11,
+            fontWeight: 400,
+            fontFamily: 'Manrope, Inter, system-ui, sans-serif',
           },
           splitLine: {
             lineStyle: {
-              color: 'rgba(255, 215, 0, 0.12)',
+              color: 'rgba(200, 139, 70, 0.18)',
+              width: 1,
             },
           },
         },
@@ -308,16 +315,20 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
           type: 'value' as const,
           axisLine: {
             lineStyle: {
-              color: 'rgba(255, 215, 0, 0.3)',
+              color: 'rgba(200, 139, 70, 0.48)',
+              width: 1.5,
             },
           },
           axisLabel: {
             color: darkThemeColors.textMuted,
             fontSize: 11,
+            fontWeight: 400,
+            fontFamily: 'Manrope, Inter, system-ui, sans-serif',
           },
           splitLine: {
             lineStyle: {
-              color: 'rgba(255, 215, 0, 0.12)',
+              color: 'rgba(200, 139, 70, 0.18)',
+              width: 1,
             },
           },
         },
@@ -397,8 +408,8 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
                 x2: 0,
                 y2: 1,
                 colorStops: [
-                  { offset: 0, color: 'rgba(255, 215, 0, 0.4)' },
-                  { offset: 1, color: 'rgba(255, 215, 0, 0.08)' },
+                  { offset: 0, color: 'rgba(244, 197, 106, 0.45)' },
+                  { offset: 1, color: 'rgba(200, 139, 70, 0.08)' },
                 ],
               },
             },
