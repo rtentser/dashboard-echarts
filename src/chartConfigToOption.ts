@@ -87,10 +87,10 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
     case 'line-chart': {
       const config2 = config as any;
       const xData = config2.x;
-      
+
       // Support both single series (y) and multiple series
       let series: any[] = [];
-      
+
       if (config2.series && Array.isArray(config2.series) && config2.series.length > 0 && config2.series[0].name) {
         // Multiple series format
         series = config2.series.map((s: any, idx: number) => ({
@@ -166,6 +166,14 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
           type: 'bar',
           data: s.data,
           name: s.name,
+          label: {
+            show: true,
+            position: 'top',
+            color: darkThemeColors.textLight,
+            fontSize: 11,
+            formatter: ({ value }: any) =>
+              typeof value === 'number' ? value.toLocaleString('ru-RU') : String(value),
+          },
           itemStyle: {
             color: darkThemeColors.chartColors[idx % darkThemeColors.chartColors.length],
           },
@@ -210,6 +218,14 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
                   ],
                 },
               },
+            },
+            label: {
+              show: true,
+              position: 'top',
+              color: darkThemeColors.textLight,
+              fontSize: 11,
+              formatter: ({ value }: any) =>
+                typeof value === 'number' ? value.toLocaleString('ru-RU') : String(value),
             },
           },
         ];
@@ -450,7 +466,7 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
         }));
       } else {
         // Support legacy bar/line format with single or multiple series each
-        
+
         // Process bar data
         if (config2.bar) {
           if (Array.isArray(config2.bar)) {
