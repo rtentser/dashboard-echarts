@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { ChartRenderer } from "./ChartRenderer";
-import type { ChartConfig } from "./types";
+import { LayoutRenderer, type LayoutItem } from "./LayoutRenderer";
 
 interface TabsBlockProps {
   title?: string;
   tabs: Array<{
     name: string;
-    charts: ChartConfig[];
+    items: LayoutItem[];
   }>;
 }
 
@@ -36,9 +35,9 @@ export function TabsBlock({ title, tabs }: TabsBlockProps) {
 
       {/* Tab Content */}
       <div className="tabs-content">
-        {tabs[activeTab]?.charts.map((config, index) => (
+        {tabs[activeTab]?.items.map((item, index) => (
           <div key={index} className="chart-wrapper">
-            <ChartRenderer config={config} />
+            <LayoutRenderer key={index} item={item} />
           </div>
         ))}
       </div>

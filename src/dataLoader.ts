@@ -41,7 +41,7 @@ export interface SummaryConfigWithoutDataSource {
 
 export interface TabConfig {
   name: string;
-  charts: (ChartConfigWithDataSource | SingleValueConfigWithoutDataSource | SummaryConfigWithDataSource | SummaryConfigWithoutDataSource)[];
+  items: LayoutComponent[];
 }
 
 export interface ChartComponentConfig {
@@ -289,12 +289,15 @@ export const loadChartsData = async (
 export const loadTabsData = async (
   tabsConfig: TabConfig[] | undefined,
   monthIndices?: { start: number; end: number }
-): Promise<Array<{ name: string; charts: ChartConfig[] }>> => {
+): Promise<any[]> => {
   if (!tabsConfig || tabsConfig.length === 0) return [];
+
   return Promise.all(
     tabsConfig.map(async (tab) => ({
       name: tab.name,
-      charts: await loadChartsData(tab.charts, monthIndices),
+      items: await Promise.all(
+        tab.items.map((item) => processLayoutComponent(item, monthIndices))
+      ),
     }))
   );
 };
@@ -317,12 +320,7 @@ const processLayoutComponent = async (
     return {
       type: 'tabs-block' as const,
       title: component.title,
-      tabs: await Promise.all(
-        component.tabs.map(async (tab) => ({
-          name: tab.name,
-          charts: await loadChartsData(tab.charts, monthIndices),
-        }))
-      ),
+      tabs: await loadTabsData(component.tabs, monthIndices),
     };
   }
 

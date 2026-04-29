@@ -1,87 +1,108 @@
 {
     "layout": [
         {
+            "type": "group-vertical",
+            "title": "Финансовый отчёт",
+            "items": [
+                {
+                    "type": "chart",
+                    "config": {
+                        "title": "Остаток денег на конец месяца",
+                        "type": "bar-chart",
+                        "dataSource": {
+                            "xField": "общее.месяц",
+                            "yField": "ДДС.Остаток денег на конец месяца"
+                        }
+                    }
+                }
+            ]
+        },
+        {
             "type": "tabs-block",
             "title": "Финансовые показатели",
             "tabs": [
                 {
                     "name": "Денежный поток",
-                    "charts": [
+                    "items": [
                         {
-                            "title": "Сегодня",
-                            "type": "single-value",
-                            "value": "27.04.2026"
-                        },
-                        {
-                            "title": "Текущий остаток денежных средств",
-                            "type": "single-value",
-                            "value": 19827961,
-                            "unit": "₽"
-                        },
-                        {
-                            "title": "Распределение денежных средств по счетам",
-                            "type": "bar-chart",
-                            "dataSource": {
-                                "xField": "дашборд ддс.ВСЕ СЧЕТА",
-                                "yField": "дашборд ддс.СУММА НА СЧЕТАХ"
+                            "type": "chart",
+                            "config": {
+                                "title": "Сегодня",
+                                "type": "single-value",
+                                "value": "27.04.2026"
                             }
                         },
                         {
-                            "type": "group-vertical",
-                            "title": "Финансовый отчёт",
-                            "items": [
-                                {
-                                    "title": "Остаток денег на конец месяца",
-                                    "type": "bar-chart",
-                                    "dataSource": {
-                                        "xField": "общее.месяц",
-                                        "yField": "ДДС.Остаток денег на конец месяца"
-                                    }
+                            "type": "chart",
+                            "config": {
+                                "title": "Текущий остаток денежных средств",
+                                "type": "single-value",
+                                "value": 19827961,
+                                "unit": "₽"
+                            }
+                        },
+                        {
+                            "type": "chart",
+                            "config": {
+                                "title": "Распределение денежных средств по счетам",
+                                "type": "bar-chart",
+                                "dataSource": {
+                                    "xField": "дашборд ддс.ВСЕ СЧЕТА",
+                                    "yField": "дашборд ддс.СУММА НА СЧЕТАХ"
                                 }
-                            ]
-                        },
-                        {
-                            "title": "Остаток денег на конец месяца",
-                            "type": "bar-chart",
-                            "dataSource": {
-                                "xField": "общее.месяц",
-                                "yField": "ДДС.Остаток денег на конец месяца"
                             }
                         },
                         {
-                            "title": "Поступления по ОД",
-                            "type": "line-chart",
-                            "dataSource": {
-                                "xField": "общее.месяц",
-                                "yField": "ДДС.Поступления по ОД"
+                            "type": "chart",
+                            "config": {
+                                "title": "Остаток денег на конец месяца",
+                                "type": "bar-chart",
+                                "dataSource": {
+                                    "xField": "общее.месяц",
+                                    "yField": "ДДС.Остаток денег на конец месяца"
+                                }
+                            }
+                        },
+                        {
+                            "type": "chart",
+                            "config": {
+                                "title": "Поступления по ОД",
+                                "type": "line-chart",
+                                "dataSource": {
+                                    "xField": "общее.месяц",
+                                    "yField": "ДДС.Поступления по ОД"
+                                }
                             }
                         }
                     ]
                 },
                 {
                     "name": "P&L",
-                    "charts": [
+                    "items": [
                         {
-                            "title": "Зарплата",
-                            "type": "bar-chart",
-                            "dataSource": {
-                                "xField": "общее.месяц",
-                                "yField": "ДДС.Зарплата"
+                            "type": "chart",
+                            "config": {
+                                "title": "Зарплата",
+                                "type": "bar-chart",
+                                "dataSource": {
+                                    "xField": "общее.месяц",
+                                    "yField": "ДДС.Зарплата"
+                                }
                             }
                         }
                     ]
                 },
                 {
                     "name": "Баланс",
-                    "charts": []
+                    "items": []
                 },
                 {
                     "name": "Оборотный капитал",
-                    "charts": []
+                    "items": []
                 },
                 {
                     "name": "Продажи",
-                    "charts": []
+                    "items": []
                 }
             ]
         }
