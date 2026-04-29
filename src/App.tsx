@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
+import { LayoutRenderer, type LayoutItem } from "./LayoutRenderer";
 import { MonthSelector } from "./MonthSelector";
 import { loadPageData } from "./dataLoader";
 import pageConfig from "./config/chartConfig.json";
 import "./styles.css";
-import { LayoutRenderer, type LayoutItem } from "./LayoutRenderer";
+
 
 function App() {
   const [layoutItems, setLayoutItems] = useState<LayoutItem[]>([]);
