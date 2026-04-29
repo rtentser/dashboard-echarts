@@ -6,11 +6,12 @@ export interface ChartConfigWithDataSource {
   type: 'line-chart' | 'bar-chart' | 'stacked-bar-chart' | 'area-chart' | 'pie-chart' | 'doughnut-chart' | 'pie-3d-chart' | 'combo-chart' | 'scatter-chart';
   dataSource?: {
     xField?: string;
-    yField?: string; // Single series
-    yFields?: Array<{ name: string; field: string }>; // Multiple series for line/bar charts
-    barFields?: Array<{ name: string; field: string }>; // Multiple bar series for combo
-    lineFields?: Array<{ name: string; field: string }>; // Multiple line series for combo
-    seriesField?: string; // For stacked charts
+    yField?: string;
+    valueField?: string;
+    yFields?: Array<{ name: string; field: string }>;
+    barFields?: Array<{ name: string; field: string }>;
+    lineFields?: Array<{ name: string; field: string }>;
+    seriesField?: string;
   };
 }
 
@@ -164,7 +165,25 @@ export const loadChartData = async (
     return configWithDataSource as any;
   }
 
-  const { xField, yField, yFields, barFields, lineFields, seriesField } = dataSource;
+  const { xField, yField, valueField, yFields, barFields, lineFields, seriesField } = dataSource;
+
+  if (type === 'doughnut-chart' && valueField) {
+    const allValues = getNestedValue(data, valueField) as unknown[];
+
+    if (!Array.isArray(allValues) || allValues.length === 0) {
+      throw new Error(`Could not find field: ${valueField}`);
+    }
+
+    const endIdx = monthIndices?.end ?? allValues.length - 1;
+    const value = parseValue(allValues[endIdx]);
+
+    return {
+      title,
+      type,
+      value,
+      scaleLabel: (configWithDataSource as any).scaleLabel,
+    } as any;
+  }
 
   // Handle different chart types
   if (type === 'stacked-bar-chart') {

@@ -420,16 +420,74 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
 
     case 'doughnut-chart': {
       const config2 = config as any;
+
+      const value = Number(config2.value ?? config2.values?.[0] ?? 0);
+      const rawValue = Number(config2.value ?? config2.values?.[0] ?? 0);
+
+      // для текста — без ограничений
+      const displayPercent = rawValue;
+
+      // для графика — максимум 100
+      const chartPercent = Math.max(0, Math.min(100, rawValue));
+
+      const scaleLabel = config2.scaleLabel ?? config2.label ?? config2.labels?.[0] ?? '';
+
       return {
         ...getDarkThemeConfig(config2.title),
+        tooltip: {
+          ...getDarkThemeConfig().tooltip,
+          trigger: 'item',
+          formatter: '{b}: {c}%',
+        },
+        graphic: [
+          {
+            type: 'text',
+            left: 'center',
+            top: '43%',
+            style: {
+              text: `${displayPercent}%`,
+              fill: darkThemeColors.textGold,
+              fontSize: 28,
+              fontWeight: 700,
+              fontFamily: 'Manrope, Inter, system-ui, sans-serif',
+              textAlign: 'center',
+            },
+          },
+          {
+            type: 'text',
+            left: 'center',
+            top: '55%',
+            style: {
+              text: scaleLabel,
+              fill: darkThemeColors.textMuted,
+              fontSize: 13,
+              fontWeight: 500,
+              fontFamily: 'Manrope, Inter, system-ui, sans-serif',
+              textAlign: 'center',
+            },
+          },
+        ],
         series: [
           {
             type: 'pie',
-            radius: ['40%', '60%'],
-            data: config2.labels.map((label: string, idx: number) => ({
-              name: label,
-              value: config2.values[idx],
-            })),
+            radius: ['55%', '72%'],
+            center: ['50%', '52%'],
+            avoidLabelOverlap: false,
+            label: { show: false },
+            labelLine: { show: false },
+            data: [
+              {
+                name: scaleLabel || 'Значение',
+                value: chartPercent,
+                itemStyle: { color: darkThemeColors.borderGold },
+              },
+              {
+                name: 'Остаток',
+                value: Math.max(0, 100 - chartPercent),
+                itemStyle: { color: 'rgba(200, 139, 70, 0.14)' },
+                tooltip: { show: false },
+              },
+            ]
           },
         ],
       };
