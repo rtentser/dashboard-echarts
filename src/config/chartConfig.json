@@ -108,18 +108,21 @@
                                             }
                                         },
                                         {
-                                            "title": "Доля рынка",
-                                            "type": "doughnut-chart",
-                                            "labels": [
-                                                "Компания A",
-                                                "Компания B",
-                                                "Компания C"
-                                            ],
-                                            "values": [
-                                                35,
-                                                40,
-                                                25
-                                            ]
+                                            "type": "chart",
+                                            "config": {
+                                                "title": "Доля рынка",
+                                                "type": "doughnut-chart",
+                                                "labels": [
+                                                    "Компания A",
+                                                    "Компания B",
+                                                    "Компания C"
+                                                ],
+                                                "values": [
+                                                    35,
+                                                    40,
+                                                    25
+                                                ]
+                                            }
                                         },
                                         {
                                             "type": "chart",
