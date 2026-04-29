@@ -30,13 +30,17 @@ export const MonthSelector: React.FC<MonthSelectorProps> = ({ onMonthsChange }) 
     }, [onMonthsChange]);
 
     const handleStartMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const idx = parseInt(e.target.value);
+        const idx = Number(e.target.value);
+        if (idx >= endMonth) return;
+
         setStartMonth(idx);
         onMonthsChange(idx, endMonth);
     };
 
     const handleEndMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const idx = parseInt(e.target.value);
+        const idx = Number(e.target.value);
+        if (idx <= startMonth) return;
+
         setEndMonth(idx);
         onMonthsChange(startMonth, idx);
     };
@@ -45,23 +49,38 @@ export const MonthSelector: React.FC<MonthSelectorProps> = ({ onMonthsChange }) 
         <div className="month-selector">
             <div className="month-selector-group">
                 <label className="month-selector-label">Исходный месяц:</label>
-                <select value={startMonth} onChange={handleStartMonthChange} className="month-selector-input">
-                    {months.map((month, idx) => (
-                        <option key={idx} value={idx}>
-                            {month}
-                        </option>
-                    ))}
+                <select
+                    value={startMonth}
+                    onChange={handleStartMonthChange}
+                    className="month-selector-input"
+                >
+                    {months
+                        .map((month, idx) => ({ month, idx }))
+                        .filter(({ idx }) => idx < endMonth)
+                        .map(({ month, idx }) => (
+                            <option key={idx} value={idx}>
+                                {month}
+                            </option>
+                        ))}
                 </select>
+
             </div>
 
             <div className="month-selector-group">
                 <label className="month-selector-label">Основной месяц:</label>
-                <select value={endMonth} onChange={handleEndMonthChange} className="month-selector-input">
-                    {months.map((month, idx) => (
-                        <option key={idx} value={idx}>
-                            {month}
-                        </option>
-                    ))}
+                <select
+                    value={endMonth}
+                    onChange={handleEndMonthChange}
+                    className="month-selector-input"
+                >
+                    {months
+                        .map((month, idx) => ({ month, idx }))
+                        .filter(({ idx }) => idx > startMonth)
+                        .map(({ month, idx }) => (
+                            <option key={idx} value={idx}>
+                                {month}
+                            </option>
+                        ))}
                 </select>
             </div>
         </div>
