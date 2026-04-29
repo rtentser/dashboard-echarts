@@ -341,16 +341,16 @@ h2 {
   background: rgba(212, 165, 116, 0.6);
 }
 
-/* Summary Card */
-.chart-wrapper-summary {
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  padding: 0;
-  backdrop-filter: none;
+.chart-wrapper-single-value {
+  background: var(--glass);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  border-radius: 12px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  display: inline-block;
 }
 
-.chart-wrapper-single-value {
+.chart-wrapper-summary {
   background: var(--glass);
   border: 1px solid rgba(255, 215, 0, 0.4);
   border-radius: 12px;
@@ -546,12 +546,4 @@ h2 {
 .tabs-content .chart-title,
 .tabs-content .group-vertical-title {
   border-bottom: none;
-}
-
-/* ВАЖНО: оставляем рамку только у single-value */
-.tabs-content .chart-wrapper-single-value {
-  border: 1px solid rgba(255, 215, 0, 0.4);
-  /* или текущий цвет */
-  background: transparent;
-  /* если нужен чистый вид */
 }

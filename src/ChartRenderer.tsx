@@ -19,15 +19,15 @@ const SingleValueRenderer = ({ config }: { config: SingleValueConfig }) => {
     const day = parseInt(str.substring(0, 2), 10);
     const month = parseInt(str.substring(2, 4), 10);
     const year = parseInt(str.substring(4, 8), 10);
-    
+
     // Check valid date ranges
     return day >= 1 && day <= 31 && month >= 1 && month <= 12 && year >= 2000 && year <= 2099;
   };
 
   const isDate = typeof config.value === 'string' || (typeof config.value === 'number' && isValidDateFormat(config.value));
-  
+
   let displayValue: string;
-  
+
   if (typeof config.value === 'string') {
     // Already a string date like "27.04.2026"
     displayValue = config.value;
@@ -61,13 +61,11 @@ const SummaryRenderer = ({ config }: { config: SummaryConfig | SummaryDataSource
 
   const summaryConfig = config as SummaryConfig;
   const difference = summaryConfig.currentValue - summaryConfig.previousValue;
-  const percentChange = (difference / summaryConfig.previousValue) * 100;
   const isPositive = difference >= 0;
   const arrow = isPositive ? '↑' : '↓';
 
   return (
     <div className="summary-container">
-      <div className="summary-title">{config.title}</div>
       <div className="summary-current">
         <span className="summary-value">{formatNumberWithSpaces(summaryConfig.currentValue)}</span>
         {config.unit && <span className="summary-unit">{config.unit}</span>}
@@ -102,7 +100,6 @@ export const ChartRenderer = ({ config, height = 420 }: ChartRendererProps) => {
 
   return (
     <div>
-      {config.title && <div className="chart-title">{config.title}</div>}
       <ReactECharts option={option} style={{ height }} notMerge lazyUpdate />
     </div>
   );

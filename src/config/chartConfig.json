@@ -1,13 +1,20 @@
 {
     "layout": [
         {
-            "type": "chart",
-            "config": {
-                "title": "Заголовок 1",
-                "type": "summary",
-                "currentValue": "ДДС.Остаток денег на конец месяца",
-                "previousValue": "ДДС.Остаток денег на конец месяца"
-            }
+            "type": "group-horizontal",
+            "title": "Ключевые метрики",
+            "items": [
+                {
+                    "type": "chart",
+                    "config": {
+                        "title": "Заголовок 1",
+                        "type": "summary",
+                        "dataSource": {
+                            "valueField": "ДДС.Остаток денег на конец месяца"
+                        }
+                    }
+                },
+            ]
         },
         {
             "type": "tabs-block",
