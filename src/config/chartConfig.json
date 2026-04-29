@@ -100,7 +100,7 @@
                                         {
                                             "type": "chart",
                                             "config": {
-                                                "title": "Остаток денег",
+                                                "title": "Остаток на депозитах",
                                                 "type": "summary",
                                                 "dataSource": {
                                                     "valueField": "ДДС.Остаток денег на конец месяца"
@@ -110,9 +110,9 @@
                                         {
                                             "type": "chart",
                                             "config": {
-                                                "title": "Доля рынка",
+                                                "title": "Выполнение плана по остатку денежных средств",
                                                 "type": "doughnut-chart",
-                                                "scaleLabel": "Компания A",
+                                                "scaleLabel": "от месячного плана по остатку Д/С",
                                                 "dataSource": {
                                                     "valueField": "ПДДС.План Выполнения по Остатку денежных средств"
                                                 }
@@ -121,7 +121,7 @@
                                         {
                                             "type": "chart",
                                             "config": {
-                                                "title": "Общий денежный поток",
+                                                "title": "Остаток в фондах",
                                                 "type": "summary",
                                                 "dataSource": {
                                                     "valueField": "ДДС.Поступления денег от клиентов"

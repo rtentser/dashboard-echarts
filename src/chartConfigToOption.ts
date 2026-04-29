@@ -99,6 +99,29 @@ const getDarkThemeConfig = (title: string = ''): Partial<EChartsOption> => ({
   color: darkThemeColors.chartColors,
 });
 
+const wrapText = (text: string, maxChars = 28) => {
+  if (!text) return '';
+
+  const words = String(text).split(' ');
+  const lines: string[] = [];
+  let line = '';
+
+  for (const word of words) {
+    const next = line ? `${line} ${word}` : word;
+
+    if (next.length > maxChars && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = next;
+    }
+  }
+
+  if (line) lines.push(line);
+
+  return lines.join('\n');
+};
+
 export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
   switch (config.type) {
     case 'line-chart': {
@@ -421,7 +444,6 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
     case 'doughnut-chart': {
       const config2 = config as any;
 
-      const value = Number(config2.value ?? config2.values?.[0] ?? 0);
       const rawValue = Number(config2.value ?? config2.values?.[0] ?? 0);
 
       // для текста — без ограничений
@@ -439,41 +461,65 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
           trigger: 'item',
           formatter: '{b}: {c}%',
         },
-        graphic: [
-          {
-            type: 'text',
-            left: 'center',
-            top: '43%',
-            style: {
-              text: `${displayPercent}%`,
-              fill: darkThemeColors.textGold,
-              fontSize: 28,
-              fontWeight: 700,
-              fontFamily: 'Manrope, Inter, system-ui, sans-serif',
-              textAlign: 'center',
-            },
+        title: {
+          text: wrapText(String(config2.title ?? '').toUpperCase(), 28),
+          left: 16,
+          top: 14,
+          textStyle: {
+            color: darkThemeColors.textGold,
+            fontSize: 14,
+            fontWeight: 600,
+            lineHeight: 22,
+            align: 'left',
           },
-          {
-            type: 'text',
-            left: 'center',
-            top: '55%',
-            style: {
-              text: scaleLabel,
-              fill: darkThemeColors.textMuted,
-              fontSize: 13,
-              fontWeight: 500,
-              fontFamily: 'Manrope, Inter, system-ui, sans-serif',
-              textAlign: 'center',
-            },
-          },
-        ],
+        },
+        // title: {
+        //   text: wrapText(String(config2.title ?? '').toUpperCase(), 28),
+        //   left: 16,
+        //   top: 14,
+        //   textStyle: {
+        //     color: darkThemeColors.textGold,
+        //     fontSize: 10,
+        //     fontWeight: 700,
+        //     lineHeight: 14,
+        //     align: 'left',
+        //   },
+        // },
+        xAxis: {
+          show: false,
+        },
+        yAxis: {
+          show: false,
+        },
+
         series: [
           {
             type: 'pie',
-            radius: ['55%', '72%'],
-            center: ['50%', '52%'],
+            center: ['50%', '56%'],
+            radius: ['52%', '68%'],
             avoidLabelOverlap: false,
-            label: { show: false },
+            label: {
+              show: true,
+              position: 'center',
+              formatter: () => {
+                return `{value|${displayPercent}%}\n{label|${wrapText(scaleLabel, 16)}}`;
+              },
+              rich: {
+                value: {
+                  color: darkThemeColors.textGold,
+                  fontSize: 26,
+                  fontWeight: 700,
+                  lineHeight: 34,
+                  align: 'center',
+                },
+                label: {
+                  color: darkThemeColors.textMuted,
+                  fontSize: 12,
+                  lineHeight: 16,
+                  align: 'center',
+                },
+              },
+            },
             labelLine: { show: false },
             data: [
               {
