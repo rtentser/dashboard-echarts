@@ -1,23 +1,6 @@
 {
     "layout": [
         {
-            "type": "group-vertical",
-            "title": "Финансовый отчёт",
-            "items": [
-                {
-                    "type": "chart",
-                    "config": {
-                        "title": "Остаток денег на конец месяца",
-                        "type": "bar-chart",
-                        "dataSource": {
-                            "xField": "общее.месяц",
-                            "yField": "ДДС.Остаток денег на конец месяца"
-                        }
-                    }
-                }
-            ]
-        },
-        {
             "type": "tabs-block",
             "title": "Финансовые показатели",
             "tabs": [
@@ -51,6 +34,23 @@
                                     "yField": "дашборд ддс.СУММА НА СЧЕТАХ"
                                 }
                             }
+                        },
+                        {
+                            "type": "group-vertical",
+                            "title": "Финансовый отчёт",
+                            "items": [
+                                {
+                                    "type": "chart",
+                                    "config": {
+                                        "title": "Остаток денег на конец месяца",
+                                        "type": "bar-chart",
+                                        "dataSource": {
+                                            "xField": "общее.месяц",
+                                            "yField": "ДДС.Остаток денег на конец месяца"
+                                        }
+                                    }
+                                }
+                            ]
                         },
                         {
                             "type": "chart",

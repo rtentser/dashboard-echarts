@@ -87,9 +87,9 @@ body {
 }
 
 /* Main Layout */
-#root > div {
+#root>div {
   padding: 20px;
-  background: 
+  background:
     radial-gradient(ellipse at 20% 50%, rgba(255, 215, 0, 0.15) 0%, transparent 50%),
     var(--bg-dark);
   display: flex;
@@ -232,7 +232,7 @@ h2 {
   backdrop-filter: blur(10px);
 }
 
-.tabs-content > .chart-wrapper {
+.tabs-content>.chart-wrapper {
   background: transparent;
   border: none;
   border-radius: 0;
@@ -241,7 +241,7 @@ h2 {
   border-bottom: 1px solid rgba(255, 215, 0, 0.2);
 }
 
-.tabs-content > .chart-wrapper:last-child {
+.tabs-content>.chart-wrapper:last-child {
   border-bottom: none;
 }
 
@@ -529,4 +529,29 @@ h2 {
   .editor {
     min-height: 320px;
   }
+}
+
+/* Убираем внутренние рамки внутри вкладок */
+.tabs-content>.chart-wrapper,
+.tabs-content .chart-wrapper {
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+.tabs-content>.chart-wrapper {
+  border-bottom: none;
+}
+
+.tabs-content .chart-title,
+.tabs-content .group-vertical-title {
+  border-bottom: none;
+}
+
+/* ВАЖНО: оставляем рамку только у single-value */
+.tabs-content .chart-wrapper-single-value {
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  /* или текущий цвет */
+  background: transparent;
+  /* если нужен чистый вид */
 }
