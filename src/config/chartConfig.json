@@ -55,7 +55,7 @@
                                         {
                                             "type": "chart",
                                             "config": {
-                                                "title": "Общий денежный поток",
+                                                "title": "Поступления по ОД",
                                                 "type": "summary",
                                                 "dataSource": {
                                                     "valueField": "ДДС.Общий денежный поток"
@@ -68,27 +68,27 @@
                                                 "title": "Общий денежный поток",
                                                 "type": "summary",
                                                 "dataSource": {
-                                                    "valueField": "ДДС.Общий денежный поток"
+                                                    "valueField": "ДДС.Поступления денег от клиентов"
                                                 }
                                             }
                                         },
                                         {
                                             "type": "chart",
                                             "config": {
-                                                "title": "Общий денежный поток",
+                                                "title": "Сальдо по ОД",
                                                 "type": "summary",
                                                 "dataSource": {
-                                                    "valueField": "ДДС.Общий денежный поток"
+                                                    "valueField": "ДДС.Операционная"
                                                 }
                                             }
                                         },
                                         {
                                             "type": "chart",
                                             "config": {
-                                                "title": "Общий денежный поток",
+                                                "title": "Выбытия по ОД",
                                                 "type": "summary",
                                                 "dataSource": {
-                                                    "valueField": "ДДС.Общий денежный поток"
+                                                    "valueField": "ДДС.Выбытия по ОД"
                                                 }
                                             }
                                         }

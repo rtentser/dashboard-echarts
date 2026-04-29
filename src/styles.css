@@ -474,13 +474,49 @@ h2 {
 }
 
 /* Group Containers */
-.group-horizontal {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
+.group-horizontal-block {
   margin-bottom: 20px;
-  align-items: flex-start;
-  flex-wrap: wrap;
+}
+
+.group-horizontal-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-gold);
+  margin-bottom: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.group-horizontal {
+  --group-gap: clamp(8px, 1.5vw, 20px);
+
+  display: grid;
+  grid-template-columns: repeat(var(--group-items), minmax(0, 1fr));
+  gap: var(--group-gap);
+  padding-inline: var(--group-gap);
+  box-sizing: border-box;
+}
+
+.group-horizontal-item {
+  min-width: 0;
+  flex: 0 0 calc((100% - (var(--group-items) + 1) * var(--group-gap)) / var(--group-items));
+}
+
+.group-horizontal-item>div {
+  height: 100%;
+  margin-bottom: 0 !important;
+}
+
+.group-horizontal-item .chart-wrapper {
+  height: 100%;
+}
+
+.group-horizontal-item .chart-wrapper,
+.group-horizontal-item .chart-wrapper-single-value,
+.group-horizontal-item .chart-wrapper-summary {
+  width: 100%;
+  display: block;
+  height: 100%;
 }
 
 .group-vertical {

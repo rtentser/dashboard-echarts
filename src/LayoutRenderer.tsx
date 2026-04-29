@@ -30,13 +30,19 @@ export const LayoutRenderer: React.FC<{ item: LayoutItem }> = ({ item }) => {
 
     if (item.type === "group-horizontal") {
         return (
-            <div className="group-horizontal">
+            <div className="group-horizontal-block">
                 {item.title && <div className="group-horizontal-title">{item.title}</div>}
-                {item.items.map((subItem, idx) => (
-                    <div key={idx} style={{ flex: "1 1 auto", minWidth: "300px" }}>
-                        <LayoutRenderer item={subItem} />
-                    </div>
-                ))}
+
+                <div
+                    className="group-horizontal"
+                    style={{ "--group-items": item.items.length } as React.CSSProperties}
+                >
+                    {item.items.map((subItem, idx) => (
+                        <div key={idx} className="group-horizontal-item">
+                            <LayoutRenderer item={subItem} />
+                        </div>
+                    ))}
+                </div>
             </div>
         );
     }
