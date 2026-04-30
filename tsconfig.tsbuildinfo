@@ -1,1 +1,1 @@
-{"root":["./src/App.tsx","./src/ChartRenderer.tsx","./src/LayoutRenderer.tsx","./src/MonthSelector.tsx","./src/TabsBlock.tsx","./src/chartConfigToOption.ts","./src/dataLoader.ts","./src/main.tsx","./src/types.ts","./src/vite-env.d.ts"],"errors":true,"version":"5.9.3"}
+{"root":["./src/App.tsx","./src/ChartRenderer.tsx","./src/LayoutRenderer.tsx","./src/MonthSelector.tsx","./src/TabsBlock.tsx","./src/chartConfigToOption.ts","./src/dataLoader.ts","./src/main.tsx","./src/types.ts","./src/vite-env.d.ts"],"version":"5.9.3"}

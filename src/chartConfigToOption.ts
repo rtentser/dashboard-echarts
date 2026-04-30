@@ -1,4 +1,4 @@
-import type { EChartsOption } from 'echarts';
+import type { EChartsOption, SeriesOption } from 'echarts';
 import type { ChartConfig } from './types';
 
 const ensureSameLength = (left: unknown[], right: unknown[], message: string) => {
@@ -129,7 +129,7 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
       const xData = config2.x;
 
       // Support both single series (y) and multiple series
-      let series: any[] = [];
+      let series: SeriesOption[] = [];
 
       if (config2.series && Array.isArray(config2.series) && config2.series.length > 0 && config2.series[0].name) {
         // Multiple series format
@@ -198,7 +198,7 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
       const xData = config2.x;
 
       // Support both single series (y) and multiple series
-      let series: any[] = [];
+      let series: SeriesOption[] = [];
 
       if (config2.series && Array.isArray(config2.series) && config2.series.length > 0 && config2.series[0].name) {
         // Multiple series format
@@ -304,7 +304,7 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
               fontSize: 12,
             },
           },
-        ],
+        ] satisfies SeriesOption[],
       };
     }
 
@@ -372,7 +372,7 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
               },
             },
           },
-        ],
+        ] satisfies SeriesOption[],
       };
     }
 
@@ -405,7 +405,7 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
           data: s.data,
           name: s.name,
           stack: 'total',
-        })),
+        })) satisfies SeriesOption[],
       };
     }
 
@@ -438,7 +438,7 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
             },
           },
         ],
-      };
+      } satisfies EChartsOption;
     }
 
     case 'doughnut-chart': {
@@ -531,12 +531,11 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
                 name: 'Остаток',
                 value: Math.max(0, 100 - chartPercent),
                 itemStyle: { color: 'rgba(200, 139, 70, 0.14)' },
-                tooltip: { show: false },
               },
             ]
           },
         ],
-      };
+      } satisfies EChartsOption;
     }
 
     case 'pie-3d-chart': {
@@ -558,12 +557,12 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
             },
           },
         ],
-      };
+      } satisfies EChartsOption;
     }
 
     case 'combo-chart': {
       const config2 = config as any;
-      let series: any[] = [];
+      let series: SeriesOption[] = [];
 
       // Support explicit series format
       if (config2.series && Array.isArray(config2.series)) {
