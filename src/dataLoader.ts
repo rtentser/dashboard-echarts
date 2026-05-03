@@ -187,17 +187,40 @@ export const loadChartData = async (
 
   // Handle different chart types
   if (type === 'stacked-bar-chart') {
-    // Stacked bar charts need series field
     const xData = xField ? (getNestedValue(data, xField) as (string | number)[]) : [];
-    if (!xData || xData.length === 0) {
+
+    if (!Array.isArray(xData) || xData.length === 0) {
       throw new Error(`Could not find xField: ${xField}`);
     }
-    // For now, return empty series - would need different config structure
+
+    if (!yFields || yFields.length === 0) {
+      throw new Error('stacked-bar-chart requires dataSource.yFields');
+    }
+
+    const series = yFields.map(({ name, field }) => {
+      const yDataRaw = getNestedValue(data, field) as unknown[];
+
+      if (!Array.isArray(yDataRaw)) {
+        throw new Error(`Could not find field: ${field}`);
+      }
+
+      if (yDataRaw.length !== xData.length) {
+        throw new Error(
+          `Field length mismatch for ${field}: x has ${xData.length} values, series has ${yDataRaw.length}.`,
+        );
+      }
+
+      return {
+        name,
+        data: yDataRaw.map(parseValue),
+      };
+    });
+
     return {
       title,
       type,
       x: xData,
-      series: [{ name: 'Series 1', data: [] }],
+      series,
     } as any;
   }
 
