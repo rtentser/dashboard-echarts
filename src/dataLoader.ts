@@ -6,7 +6,6 @@ export interface ChartConfigWithDataSource {
   type: 'line-chart' | 'bar-chart' | 'stacked-bar-chart' | 'area-chart' | 'pie-chart' | 'doughnut-chart' | 'pie-3d-chart' | 'combo-chart' | 'scatter-chart';
   dataSource?: {
     xField?: string;
-    yField?: string;
     valueField?: string;
     yFields?: Array<{ name: string; field: string }>;
     barFields?: Array<{ name: string; field: string }>;
@@ -165,7 +164,7 @@ export const loadChartData = async (
     return configWithDataSource as any;
   }
 
-  const { xField, yField, valueField, yFields, barFields, lineFields, seriesField } = dataSource;
+  const { xField, valueField, yFields, barFields, lineFields } = dataSource;
 
   if (type === 'doughnut-chart' && valueField) {
     const allValues = getNestedValue(data, valueField) as unknown[];
@@ -186,7 +185,9 @@ export const loadChartData = async (
   }
 
   // Handle different chart types
-  if (type === 'stacked-bar-chart') {
+  const yFieldsChartTypes = ['line-chart', 'bar-chart', 'area-chart', 'stacked-bar-chart'];
+
+  if (yFieldsChartTypes.includes(type)) {
     const xData = xField ? (getNestedValue(data, xField) as (string | number)[]) : [];
 
     if (!Array.isArray(xData) || xData.length === 0) {
@@ -194,7 +195,7 @@ export const loadChartData = async (
     }
 
     if (!yFields || yFields.length === 0) {
-      throw new Error('stacked-bar-chart requires dataSource.yFields');
+      throw new Error(`${type} requires dataSource.yFields`);
     }
 
     const series = yFields.map(({ name, field }) => {
@@ -218,33 +219,7 @@ export const loadChartData = async (
 
     return {
       title,
-      type,
-      x: xData,
-      series,
-    } as any;
-  }
-
-  // Handle line-chart and bar-chart with multiple series
-  if ((type === 'line-chart' || type === 'bar-chart') && yFields && yFields.length > 0) {
-    const xData = xField ? (getNestedValue(data, xField) as (string | number)[]) : [];
-    if (!xData || xData.length === 0) {
-      throw new Error(`Could not find xField: ${xField}`);
-    }
-
-    const series = yFields.map(({ name, field }) => {
-      const yDataRaw = getNestedValue(data, field) as unknown[];
-      if (!Array.isArray(yDataRaw)) {
-        throw new Error(`Could not find field: ${field}`);
-      }
-      return {
-        name,
-        data: yDataRaw.map(parseValue),
-      };
-    });
-
-    return {
-      title,
-      type,
+      type: type as any,
       x: xData,
       series,
     } as any;
@@ -297,22 +272,7 @@ export const loadChartData = async (
     } as any;
   }
 
-  // Handle single series (backward compatible)
-  const xData = xField ? (getNestedValue(data, xField) as (string | number)[]) : [];
-  const yDataRaw = yField ? (getNestedValue(data, yField) as unknown[]) : [];
-
-  if (!Array.isArray(xData) || !Array.isArray(yDataRaw) || xData.length === 0 || yDataRaw.length === 0) {
-    throw new Error(`Could not find fields: ${xField}, ${yField}`);
-  }
-
-  const yData = yDataRaw.map(parseValue);
-
-  return {
-    title,
-    type: type as any,
-    x: xData,
-    y: yData,
-  } as any;
+  throw new Error(`Unsupported dataSource configuration for chart type: ${type}`);
 };
 
 /**

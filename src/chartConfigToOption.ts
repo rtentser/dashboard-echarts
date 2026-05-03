@@ -126,18 +126,43 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
   switch (config.type) {
     case 'line-chart': {
       const config2 = config as any;
-      const xData = config2.x;
 
-      // Support both single series (y) and multiple series
-      let series: SeriesOption[] = [];
+      if (!Array.isArray(config2.series) || config2.series.length === 0) {
+        throw new Error('line-chart requires `series`.');
+      }
 
-      if (config2.series && Array.isArray(config2.series) && config2.series.length > 0 && config2.series[0].name) {
-        // Multiple series format
-        series = config2.series.map((s: any, idx: number) => ({
+      config2.series.forEach((s: any) => {
+        ensureSameLength(
+          config2.x,
+          s.data,
+          '`x` and every line-chart series data array must have the same length.',
+        );
+      });
+
+      return {
+        ...getDarkThemeConfig(config2.title),
+        tooltip: {
+          ...getDarkThemeConfig().tooltip,
+          trigger: 'axis',
+        },
+        legend: {
+          bottom: 0,
+          textStyle: {
+            color: darkThemeColors.textMuted,
+          },
+        },
+        xAxis: {
+          ...getDarkThemeConfig().xAxis,
+          data: config2.x,
+        },
+        yAxis: getDarkThemeConfig().yAxis,
+        series: config2.series.map((s: any, idx: number) => ({
           type: 'line',
-          data: s.data,
           name: s.name,
+          data: s.data,
           smooth: true,
+          symbol: 'circle',
+          symbolSize: 5,
           itemStyle: {
             color: darkThemeColors.chartColors[idx % darkThemeColors.chartColors.length],
           },
@@ -145,127 +170,52 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
             color: darkThemeColors.chartColors[idx % darkThemeColors.chartColors.length],
             width: 2,
           },
-          symbolSize: 5,
-          symbol: 'circle',
-        }));
-      } else if (config2.y && Array.isArray(config2.y)) {
-        // Single series format (backward compatible)
-        ensureSameLength(xData, config2.y, '`x` and `y` must have the same length for line-chart.');
-        series = [
-          {
-            type: 'line',
-            data: config2.y,
-            smooth: true,
-            itemStyle: {
-              color: darkThemeColors.borderGold,
-            },
-            lineStyle: {
-              color: darkThemeColors.borderGold,
-              width: 2,
-            },
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [
-                  { offset: 0, color: 'rgba(244, 197, 106, 0.45)' },
-                  { offset: 1, color: 'rgba(200, 139, 70, 0.08)' },
-                ],
-              },
-            },
-            symbolSize: 5,
-            symbol: 'circle',
-          },
-        ];
-      }
-
-      return {
-        ...getDarkThemeConfig(config2.title),
-        xAxis: {
-          ...getDarkThemeConfig().xAxis,
-          data: xData,
-        },
-        yAxis: getDarkThemeConfig().yAxis,
-        series,
-      };
+        })),
+      } satisfies EChartsOption;
     }
 
     case 'bar-chart': {
       const config2 = config as any;
-      const xData = config2.x;
 
-      // Support both single series (y) and multiple series
-      let series: SeriesOption[] = [];
-
-      if (config2.series && Array.isArray(config2.series) && config2.series.length > 0 && config2.series[0].name) {
-        // Multiple series format
-        series = config2.series.map((s: any, idx: number) => ({
-          type: 'bar',
-          data: s.data,
-          name: s.name,
-          itemStyle: {
-            color: darkThemeColors.chartColors[idx % darkThemeColors.chartColors.length],
-          },
-          emphasis: {
-            itemStyle: {
-              color: darkThemeColors.chartColors[idx % darkThemeColors.chartColors.length],
-              opacity: 0.8,
-            },
-          },
-        }));
-      } else if (config2.y && Array.isArray(config2.y)) {
-        // Single series format (backward compatible)
-        ensureSameLength(xData, config2.y, '`x` and `y` must have the same length for bar-chart.');
-        series = [
-          {
-            type: 'bar',
-            data: config2.y,
-            itemStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [
-                  { offset: 0, color: '#f4c56a' },
-                  { offset: 0.45, color: '#c88b46' },
-                  { offset: 1, color: '#3f7ee8' },
-                ],
-              },
-            },
-            emphasis: {
-              itemStyle: {
-                color: {
-                  type: 'linear',
-                  x: 0,
-                  y: 0,
-                  x2: 0,
-                  y2: 1,
-                  colorStops: [
-                    { offset: 0, color: '#ffe08a' },
-                    { offset: 0.45, color: '#d99a4a' },
-                    { offset: 1, color: '#5b9cff' },
-                  ],
-                },
-              },
-            },
-          },
-        ];
+      if (!Array.isArray(config2.series) || config2.series.length === 0) {
+        throw new Error('bar-chart requires `series`.');
       }
+
+      config2.series.forEach((s: any) => {
+        ensureSameLength(
+          config2.x,
+          s.data,
+          '`x` and every bar-chart series data array must have the same length.',
+        );
+      });
 
       return {
         ...getDarkThemeConfig(config2.title),
+        tooltip: {
+          ...getDarkThemeConfig().tooltip,
+          trigger: 'axis',
+        },
+        legend: {
+          bottom: 0,
+          textStyle: {
+            color: darkThemeColors.textMuted,
+          },
+        },
         xAxis: {
           ...getDarkThemeConfig().xAxis,
-          data: xData,
+          data: config2.x,
         },
         yAxis: getDarkThemeConfig().yAxis,
-        series,
-      };
+        series: config2.series.map((s: any, idx: number) => ({
+          type: 'bar',
+          name: s.name,
+          data: s.data,
+          itemStyle: {
+            color: darkThemeColors.chartColors[idx % darkThemeColors.chartColors.length],
+            borderRadius: [6, 6, 0, 0],
+          },
+        })),
+      } satisfies EChartsOption;
     }
 
     case 'pie-chart': {
@@ -411,33 +361,54 @@ export const chartConfigToOption = (config: ChartConfig): EChartsOption => {
 
     case 'area-chart': {
       const config2 = config as any;
+
+      if (!Array.isArray(config2.series) || config2.series.length === 0) {
+        throw new Error('area-chart requires `series`.');
+      }
+
+      config2.series.forEach((s: any) => {
+        ensureSameLength(
+          config2.x,
+          s.data,
+          '`x` and every area-chart series data array must have the same length.',
+        );
+      });
+
       return {
         ...getDarkThemeConfig(config2.title),
+        tooltip: {
+          ...getDarkThemeConfig().tooltip,
+          trigger: 'axis',
+        },
+        legend: {
+          bottom: 0,
+          textStyle: {
+            color: darkThemeColors.textMuted,
+          },
+        },
         xAxis: {
           ...getDarkThemeConfig().xAxis,
           data: config2.x,
         },
         yAxis: getDarkThemeConfig().yAxis,
-        series: [
-          {
-            type: 'line',
-            data: config2.y,
-            smooth: true,
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [
-                  { offset: 0, color: 'rgba(244, 197, 106, 0.45)' },
-                  { offset: 1, color: 'rgba(200, 139, 70, 0.08)' },
-                ],
-              },
-            },
+        series: config2.series.map((s: any, idx: number) => ({
+          type: 'line',
+          name: s.name,
+          data: s.data,
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 5,
+          itemStyle: {
+            color: darkThemeColors.chartColors[idx % darkThemeColors.chartColors.length],
           },
-        ],
+          lineStyle: {
+            color: darkThemeColors.chartColors[idx % darkThemeColors.chartColors.length],
+            width: 2,
+          },
+          areaStyle: {
+            opacity: 0.24,
+          },
+        })),
       } satisfies EChartsOption;
     }
 

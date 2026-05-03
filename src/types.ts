@@ -2,16 +2,14 @@ export type LineChartConfig = {
   title?: string;
   type: 'line-chart';
   x: Array<string | number>;
-  y?: number[]; // Single series (backward compatible)
-  series?: Array<{ name: string; data: number[] }>; // Multiple series
+  series: Array<{ name: string; data: number[] }>;
 };
 
 export type BarChartConfig = {
   title?: string;
   type: 'bar-chart';
   x: Array<string | number>;
-  y?: number[]; // Single series (backward compatible)
-  series?: Array<{ name: string; data: number[] }>; // Multiple series
+  series: Array<{ name: string; data: number[] }>;
 };
 
 export type StackedBarChartConfig = {
@@ -25,7 +23,7 @@ export type AreaChartConfig = {
   title?: string;
   type: 'area-chart';
   x: Array<string | number>;
-  y: number[];
+  series: Array<{ name: string; data: number[] }>;
 };
 
 export type PieChartConfig = {
